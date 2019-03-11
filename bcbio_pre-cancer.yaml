@@ -1,0 +1,35 @@
+
+details:
+- description: sample
+  files: [sample_R1.fq.gz, sample_R2.fq.gz]
+  metadata:
+    batch: [sample]
+    phenotype: tumor
+  analysis: variant2
+  genome_build: hg19
+  algorithm:
+    platform: illumina
+    quality_format: standard
+    umi_type: fastq_name
+    trim_reads: true
+    adapters: truseq
+    aligner:  bwa
+    mark_duplicates: true
+    recalibrate: false
+    realign: false
+    coverage_interval: regions.bed
+    min_allele_fraction: 0
+    variantcaller: [vardict, freebayes]
+    ensemble:
+      numpass: 2
+    tools_on: [damage_filter]
+    svcaller: [cnvkit]
+resources:
+ default:
+  memory: 7G
+  cores: 7
+  jvm_opts: ["-Xms750m", "-Xmx7000m"]
+  fgbio:
+   options: [--min-reads, 2]
+upload:
+  dir: project_dir
