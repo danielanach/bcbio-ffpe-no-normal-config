@@ -26,7 +26,7 @@ bcbio_fastq_umi_prep.py autopair -c <cores_to_use> <list> <of> <fastq> <files>
 
 This will recognize which fastq file contains the UMI sequences and then annotate your R1 and R2 files with the UMI sequences in the fastq read names.
 
-### Adjust minimum number of reads per UMI
+### Adjust UMI consensus making parameters
 
 Parameters for [fgbio consensus making](http://fulcrumgenomics.github.io/fgbio/tools/latest/CallMolecularConsensusReads.html) can be adjusted in the .yaml configuration file:
 ```
