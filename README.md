@@ -44,6 +44,21 @@ The default options are as such:
 --edits: 1
 ```
 
+## Regions for analysis
+
+To indicate a region to calculate coverage in QC metrics, indicate your bed file in this .yaml parameter:
+```
+coverage: exome.bed
+```
+
+To limit variant (and copy number) calling to a given region, indicate your bed file in this .yaml parameter:
+
+```
+variant_regions: exome.bed
+```
+
+If you have issues please ensure the bed file genome version is the same as your are using here, here are some [additional tips](https://bcbio-nextgen.readthedocs.io/en/latest/contents/configuration.html#input-file-preparation).
+
 ## Adjust resources
 
 Resources can be adjusted in the .yaml configuration file, under the resources section:
