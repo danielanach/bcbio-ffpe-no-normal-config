@@ -17,9 +17,10 @@ details:
     mark_duplicates: true
     recalibrate: false
     realign: false
-    coverage_interval: regions.bed
-    min_allele_fraction: 0
+    coverage: exome.bed
+    variant_regions: exome.bed
     variantcaller: [vardict, freebayes]
+    min_allele_fraction: 0
     ensemble:
       numpass: 2
     tools_on: [damage_filter]
