@@ -1,9 +1,9 @@
 
 details:
-- description: sample
-  files: [sample_R1.fq.gz, sample_R2.fq.gz]
+- description: sample1
+  files: [/path/sample1_R1.fq.gz, /path/to/sample1_R2.fq.gz]
   metadata:
-    batch: [sample]
+    batch: [sample1]
     phenotype: tumor
   analysis: variant2
   genome_build: hg19
@@ -17,13 +17,12 @@ details:
     mark_duplicates: true
     recalibrate: false
     realign: false
-    coverage: exome.bed
-    variant_regions: exome.bed
+    coverage: /path/exome.bed
+    variant_regions: /path/exome.bed
     variantcaller: [vardict, freebayes]
     min_allele_fraction: 0
     ensemble:
       numpass: 2
-    tools_on: [damage_filter]
     svcaller: [cnvkit]
 resources:
  default:
@@ -33,4 +32,4 @@ resources:
   fgbio:
    options: [--min-reads, 2]
 upload:
-  dir: project_dir
+  dir: /path/project_dir
