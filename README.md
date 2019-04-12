@@ -1,14 +1,12 @@
 # bcbio-pre-cancer-config
 
-Configuration to use bcbio workflow for pre-cancer tumor only ffpe samples for somatic variant calls.
+Configuration to use [bcbio workflow](https://bcbio-nextgen.readthedocs.io/en/latest/contents/pipelines.html#cancer-variant-calling) for analysis of pre-cancer tumor only ffpe samples for somatic variant calls.
 
-Method assumes a targeted hybridization library sequencing preparation such as Agilent XTHS.
+Method assumes WGS or targeted hybridization library sequencing preparation such as Agilent XTHS.
 
-This workflow leverages unique molecular identifiers (UMIs) for additional error correction and PCR duplicate removal. It also uses the population database approach of filtering germline samples described in the [bcbio documentation](https://bcbio-nextgen.readthedocs.io/en/latest/contents/pipelines.html#cancer-variant-calling) as well as in this [benchmarking blog post](https://bcbio-nextgen.readthedocs.io/en/latest/contents/pipelines.html#cancer-variant-calling)
+This workflow leverages unique molecular identifiers (UMIs) for additional error correction and PCR duplicate removal. It also uses the population database approach of filtering germline samples described in the [bcbio documentation](https://bcbio-nextgen.readthedocs.io/en/latest/contents/pipelines.html#cancer-variant-calling) as well as in this [benchmarking blog post](http://bcb.io/2015/03/05/cancerval/).
 
-
-
-## Installation
+## Installation of bcbio
 
 Follow the install instructions found on the [bcbio docs](https://bcbio-nextgen.readthedocs.io/en/latest/contents/installation.html).
 
@@ -71,7 +69,7 @@ resources:
   jvm_opts: ["-Xms750m", "-Xmx7000m"]
 ```
 
-Customize this section to utilize the available cores and RAM in your own machine. Note the memory is PER CORE. So in this examble here, I am using 7 cores with a total of 49 Gb of RAM.
+Customize this section to utilize the available cores and RAM in your own machine. Note the memory is PER CORE. So in this example here, I am using 7 cores with a total of 49 Gb of RAM.
 
 ## Execution
 
