@@ -6,6 +6,22 @@ Method assumes WGS or targeted hybridization library sequencing preparation such
 
 This workflow leverages unique molecular identifiers (UMIs) for additional error correction and PCR duplicate removal. It also uses the population database approach of filtering germline samples described in the [bcbio documentation](https://bcbio-nextgen.readthedocs.io/en/latest/contents/pipelines.html#cancer-variant-calling) as well as in this [benchmarking blog post](http://bcb.io/2015/03/05/cancerval/).
 
+## File size estimation
+data:
+
+|   | depth  | fastq.gz  | bam  | consensus bam  | vcf.gz  | QC metrics  |
+|---|---|---|---|---|---|---|
+| Exome (50Mb)  | 120x  | 5-10 Gb  | 10-30 Gb  | 5 Gb  | 3-6 Mb  | 6 Mb  |
+| AIO (700kb) | 120x  | 300-500 Mb  | 150 Mb  | 75 Mb  | 3-6 Mb  | 6 Mb  |
+
+bcbio:
+
+|   | total  |
+|---|---|
+| Tools  | 4 Gb  |
+| Databases  | ~200 Gb  |
+
+
 ## Installation of bcbio
 
 Follow the install instructions found on the [bcbio docs](https://bcbio-nextgen.readthedocs.io/en/latest/contents/installation.html).
@@ -46,13 +62,13 @@ The default options are as such:
 
 To indicate a region to calculate coverage in QC metrics, indicate your bed file in this .yaml parameter:
 ```
-coverage: exome.bed
+coverage: /path/exome.bed
 ```
 
-To limit variant (and copy number) calling to a given region, indicate your bed file in this .yaml parameter:
+To limit variant calling to a given region, indicate your bed file in this .yaml parameter:
 
 ```
-variant_regions: exome.bed
+variant_regions: /path/exome.bed
 ```
 
 If you have issues please ensure the bed file genome version is the same as your are using here, here are some [additional tips](https://bcbio-nextgen.readthedocs.io/en/latest/contents/configuration.html#input-file-preparation).
