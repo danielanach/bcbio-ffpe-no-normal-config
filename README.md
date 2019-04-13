@@ -1,12 +1,48 @@
 # bcbio-pre-cancer-config
 
-Configuration to use [bcbio workflow](https://bcbio-nextgen.readthedocs.io/en/latest/contents/pipelines.html#cancer-variant-calling) for analysis of pre-cancer tumor only ffpe samples for somatic variant calls.
+Configuration to use [bcbio workflow](https://bcbio-nextgen.readthedocs.io/en/latest/contents/pipelines.html#cancer-variant-calling) for analysis of pre-cancer FFPE samples without matched normal for somatic, germline and copy number variant calling.
 
 Method assumes WGS or targeted hybridization library sequencing preparation such as Agilent XTHS.
 
 This workflow leverages unique molecular identifiers (UMIs) for additional error correction and PCR duplicate removal. It also uses the population database approach of filtering germline samples described in the [bcbio documentation](https://bcbio-nextgen.readthedocs.io/en/latest/contents/pipelines.html#cancer-variant-calling) as well as in this [benchmarking blog post](http://bcb.io/2015/03/05/cancerval/).
 
-## File size estimation
+## Configuration
+
+The primary purpose of this repository is to document a use case of bcbio for tumor-only cancer variant calling using UMIs. 
+
+The configuration example is in the form of a yaml file and in this repository is named: `bcbio_pre-cancer.yaml`
+
+### Sample information
+
+At the minimum you will need to edit information about your samples:
+```
+- description: sample1
+  files: [/path/sample1_R1.fq.gz, /path/to/sample1_R2.fq.gz]
+  metadata:
+    batch: [sample1]
+```
+
+### Regions for analysis 
+
+To indicate a region to calculate coverage in QC metrics, indicate your bed file in this yaml parameter:
+```
+coverage: /path/exome.bed
+```
+
+To limit variant calling to a given region, indicate your bed file in this yaml parameter:
+
+```
+variant_regions: /path/exome.bed
+```
+
+If you have issues please ensure the bed file genome version is the same as your are using here, here are some [additional tips](https://bcbio-nextgen.readthedocs.io/en/latest/contents/configuration.html#input-file-preparation).
+
+## Installation of bcbio
+
+### File size estimation
+
+A consideration for using bcbio is memory, these are some estimates for space requirements - most notable is the large amount of space required by the databases which are used for annotation of variants (population, functional, etc.).
+
 data:
 
 |   | depth  | fastq.gz  | bam  | consensus bam  | vcf.gz  | QC metrics  |
@@ -22,13 +58,17 @@ bcbio:
 | Databases  | ~200 Gb  |
 
 
-## Installation of bcbio
+## Installation instructions
 
-Follow the install instructions found on the [bcbio docs](https://bcbio-nextgen.readthedocs.io/en/latest/contents/installation.html).
+Follow the install instructions found on the [bcbio docs](https://bcbio-nextgen.readthedocs.io/en/latest/contents/installation.html). Note that this installation can take several hours.
 
-Additionally include the following flag in your install to download the gemini database.
+You can install everything as default with the addition of the gemini databases. As indicated by the `--datatarget gemini` flag. This is required to install databases that will be used for prioritization of somatic variant calls.
+
 ```
---datatarget gemini
+wget https://raw.github.com/bcbio/bcbio-nextgen/master/scripts/bcbio_nextgen_install.py
+
+python bcbio_nextgen_install.py /usr/local/share/bcbio --tooldir=/usr/local \
+        --genomes hg19 --aligners bwa --datatarget gemini
 ```
 
 ## UMI specific steps
@@ -42,7 +82,7 @@ This will recognize which fastq file contains the UMI sequences and then annotat
 
 ### Adjust UMI consensus making parameters
 
-Parameters for [fgbio consensus making](http://fulcrumgenomics.github.io/fgbio/tools/latest/CallMolecularConsensusReads.html) can be adjusted in the .yaml configuration file:
+Parameters for [fgbio consensus making](http://fulcrumgenomics.github.io/fgbio/tools/latest/CallMolecularConsensusReads.html) can be adjusted in the yaml configuration file:
 ```
 fgbio:
  options: [--min-reads, 2]
@@ -60,12 +100,12 @@ The default options are as such:
 
 ## Regions for analysis
 
-To indicate a region to calculate coverage in QC metrics, indicate your bed file in this .yaml parameter:
+To indicate a region to calculate coverage in QC metrics, indicate your bed file in this yaml parameter:
 ```
 coverage: /path/exome.bed
 ```
 
-To limit variant calling to a given region, indicate your bed file in this .yaml parameter:
+To limit variant calling to a given region, indicate your bed file in this yaml parameter:
 
 ```
 variant_regions: /path/exome.bed
@@ -75,7 +115,7 @@ If you have issues please ensure the bed file genome version is the same as your
 
 ## Adjust resources
 
-Resources can be adjusted in the .yaml configuration file, under the resources section:
+Resources can be adjusted in the yaml configuration file, under the resources section:
 
 ```
 resources:
