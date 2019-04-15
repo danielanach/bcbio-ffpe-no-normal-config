@@ -25,7 +25,10 @@ At the minimum you will need to edit information about your samples:
   files: [/path/sample1_R1.fq.gz, /path/to/sample1_R2.fq.gz]
   metadata:
     batch: [sample1]
+    phenotype: tumor
 ```
+
+Unless you have matched normal, then do not change the phenotype for your samples. 
 
 ### Regions for analysis 
 
