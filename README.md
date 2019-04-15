@@ -11,13 +11,13 @@ This configuration assumes:
 This workflow leverages unique molecular identifiers (UMIs) for additional error correction and PCR duplicate removal. It also uses a population database strategy for filtering of germline variants described in the [bcbio documentation](https://bcbio-nextgen.readthedocs.io/en/latest/contents/pipelines.html#cancer-variant-calling) as well as in this [benchmarking blog post](http://bcb.io/2015/03/05/cancerval/). This somatic variant prioritization approach is the biggest benefit of utilizing the bcbio cancer variant calling workflow.
 
 
-## Configuration
+## Configuration file
 
 The pipeline is executed using a yaml file and in this repository the example is named: `bcbio_pre-cancer.yaml`.
 
 The yaml file is edited for each workflow execution to reflect necessary parameters for that analysis.
 
-### Sample information
+### Adjust sample information
 
 At the minimum you will need to edit information about your samples:
 ```
@@ -30,7 +30,7 @@ At the minimum you will need to edit information about your samples:
 
 Unless you have matched normal, then do not change the phenotype for your samples. 
 
-### Regions for analysis 
+### Adjust regions for analysis 
 
 To indicate a region to calculate coverage in QC metrics, indicate your bed file in this yaml parameter:
 ```
@@ -46,6 +46,31 @@ variant_regions: /path/exome.bed
 If you have issues please ensure the bed file genome version is the same as your are using here, here are some [additional tips](https://bcbio-nextgen.readthedocs.io/en/latest/contents/configuration.html#input-file-preparation).
 
 If you have WGS data, you can remove these two parameters from the yaml file.
+
+### Adjust UMI consensus making parameters
+
+Parameters for [fgbio consensus making](http://fulcrumgenomics.github.io/fgbio/tools/latest/CallMolecularConsensusReads.html) can be adjusted in the yaml configuration file, the only parameter adjusted in this configuration is to use a minimum of 2 reads to create a consensus read. This is indicated in the configuration file via this portion of the yaml file.
+```
+fgbio:
+ options: [--min-reads, 2]
+```
+
+### Adjust resources
+
+Prior to execution of the pipeline, adjust the yaml configuration file resources section:
+
+```
+resources:
+ default:
+  memory: 7G
+  cores: 7
+  jvm_opts: ["-Xms750m", "-Xmx7000m"]
+```
+
+Customize this section to utilize the available cores and RAM in your own machine. Note the memory is PER CORE. So in this example here, I am using 7 cores with a total of 49 Gb of RAM.
+
+## Other notes:
+
 
 ## Installation of bcbio
 
@@ -83,8 +108,9 @@ python bcbio_nextgen_install.py /usr/local/share/bcbio --tooldir=/usr/local \
         --genomes hg19 --aligners bwa --datatarget gemini
 ```
 
-## UMI considerations
-#### Annotate fastq files with UMI information
+## Fastq pre-processing for UMIs
+
+If your UMI reads are contained in a third fastq files, you will need to annotate your R1 and R2 fastq read names to contain the associated UMIs.
 
 ```
 bcbio_fastq_umi_prep.py autopair -c <cores_to_use> <list> <of> <fastq> <files>
@@ -92,31 +118,9 @@ bcbio_fastq_umi_prep.py autopair -c <cores_to_use> <list> <of> <fastq> <files>
 
 This assumes you have R1, R2, and UMI fastq files. This will recognize which fastq file contains the UMI sequences and then annotate your R1 and R2 files with the UMI sequences in the fastq read names.
 
-### Adjust UMI consensus making parameters
-
-Parameters for [fgbio consensus making](http://fulcrumgenomics.github.io/fgbio/tools/latest/CallMolecularConsensusReads.html) can be adjusted in the yaml configuration file, the only parameter adjusted in this configuration is to use a minimum of 2 reads to create a consensus read. This is indicated in the configuration file via this portion of the yaml file.
-```
-fgbio:
- options: [--min-reads, 2]
-```
-
-## Adjust resources
-
-Prior to execution of the pipeline, adjust the yaml configuration file resources section:
-
-```
-resources:
- default:
-  memory: 7G
-  cores: 7
-  jvm_opts: ["-Xms750m", "-Xmx7000m"]
-```
-
-Customize this section to utilize the available cores and RAM in your own machine. Note the memory is PER CORE. So in this example here, I am using 7 cores with a total of 49 Gb of RAM.
-
 ## Execution
 
-After bcbio installation and proper yaml file configuration, and UMI pre-processing, copy your yaml file into your working directory.
+After bcbio installation, proper yaml file configuration, and UMI pre-processing, copy your yaml file into your working directory.
 
 The workflow can be executed using:
 
