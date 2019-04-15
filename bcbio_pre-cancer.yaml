@@ -1,7 +1,7 @@
 
 details:
 - description: sample1
-  files: [/path/sample1_R1.fq.gz, /path/to/sample1_R2.fq.gz]
+  files: [/path/sample1_R1.fq.gz, /path/sample1_R2.fq.gz]
   metadata:
     batch: [sample1]
     phenotype: tumor
@@ -25,7 +25,7 @@ details:
     ensemble:
       numpass: 2
 - description: sample2
-  files: [/path/sample2_R1.fq.gz, /path/to/sample2_R2.fq.gz]
+  files: [/path/sample2_R1.fq.gz, /path/sample2_R2.fq.gz]
   metadata:
     batch: [sample2]
     phenotype: tumor
