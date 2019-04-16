@@ -132,6 +132,7 @@ bcbio_nextgen.py bcbio_pre-cancer.yaml -n <cores_to_use>
 
 The final output structure will contain several folders and files. 
 
+```
 /path/project_name      
 │── project_name       
 │&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;└── sample_1.ensemble.vcf.gz   
@@ -142,7 +143,8 @@ The final output structure will contain several folders and files.
 │&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;└──  etc.  
 └──  sample_2     
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;└──  etc. 
- 
+```
+
 The final somatic VCF will be contained in the main project folder with the extension *.ensemble.vcf as well as multiQC metrics. Germline VCF and copy number variants will be contained in individuals sample folders.
 
 ```
