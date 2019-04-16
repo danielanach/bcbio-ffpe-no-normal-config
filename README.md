@@ -127,3 +127,22 @@ The workflow can be executed using:
 ```
 bcbio_nextgen.py bcbio_pre-cancer.yaml -n <cores_to_use>
 ```
+
+## Results
+
+The final output structure will contain several folders and files. 
+
+/path/project_name      
+│── project_name       
+│&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;└── sample_1.ensemble.vcf.gz   
+│&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;└── sample_2.ensemble.vcf.gz   
+│&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;└── multiqc      
+│&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;└── etc.   
+│── sample_1    
+│&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;└──  etc.  
+└──  sample_2     
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;└──  etc. 
+ 
+The final somatic VCF will be contained in the main project folder with the extension *.ensemble.vcf as well as multiQC metrics. Germline VCF and copy number variants will be contained in individuals sample folders.
+
+```
