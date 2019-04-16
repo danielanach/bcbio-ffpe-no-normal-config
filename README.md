@@ -3,10 +3,10 @@
 Configuration to use [bcbio workflow](https://bcbio-nextgen.readthedocs.io/en/latest/contents/pipelines.html#cancer-variant-calling) with the intention of obtaining somatic, germline and copy number variant calling from pre-cancer FFPE samples without matched normal.
 
 This configuration assumes:
-* Targeted capture library sequencing preparation (e.g. Agilent SureSelect XTHS)
+* Targeted hybridization library sequencing preparation such as Agilent XTHS
 * Paired-end sequencing
 * UMIs were used and are contained in separate fastq file
-* Samples are 'tumor/lesion' without matched normal
+* Samples are 'tumor' without matched normal
 
 This workflow leverages unique molecular identifiers (UMIs) for additional error correction and PCR duplicate removal. It also uses a population database strategy for filtering of germline variants described in the [bcbio documentation](https://bcbio-nextgen.readthedocs.io/en/latest/contents/pipelines.html#cancer-variant-calling) as well as in this [benchmarking blog post](http://bcb.io/2015/03/05/cancerval/). This somatic variant prioritization approach is the biggest benefit of utilizing the bcbio cancer variant calling workflow.
 
@@ -32,18 +32,18 @@ Unless you have matched normal, then do not change the phenotype for your sample
 
 ### Adjust regions for analysis 
 
-To specific a list of targeted regions to calculate coverage in QC metrics, indicate your bed file location in this yaml parameter:
+To indicate a region to calculate coverage in QC metrics, indicate your bed file in this yaml parameter:
 ```
 coverage: /path/exome.bed
 ```
 
-To limit variant calling to a given targeted region, indicate your bed file in this yaml parameter:
+To limit variant calling to a given region, indicate your bed file in this yaml parameter:
 
 ```
 variant_regions: /path/exome.bed
 ```
 
-If you have issues please ensure the bed file genome version (e.g. hg19, hg38, or GRch38) is the same as the one used for read alignment, here are some [additional tips](https://bcbio-nextgen.readthedocs.io/en/latest/contents/configuration.html#input-file-preparation).
+If you have issues please ensure the bed file genome version is the same as your are using here, here are some [additional tips](https://bcbio-nextgen.readthedocs.io/en/latest/contents/configuration.html#input-file-preparation).
 
 If you have WGS data, you can remove these two parameters from the yaml file.
 
@@ -57,7 +57,7 @@ fgbio:
 
 ### Adjust resources
 
-Prior to execution of the pipeline, edit the yaml configuration file resources section:
+Prior to execution of the pipeline, adjust the yaml configuration file resources section:
 
 ```
 resources:
@@ -135,16 +135,25 @@ The final output structure will contain several folders and files.
 ```
 /path/project_name      
 │── project_name       
-│       └── sample_1.ensemble.vcf.gz   
-│       └── sample_2.ensemble.vcf.gz   
+│       └── sample_1-ensemble-annotated.vcf.gz   # Somatic variant calls - (intersection freebayes and vardict)
+│       └── sample_2-ensemble-annotated.vcf.gz   # Somatic variant calls - (intersection freebayes and vardict)
 │       └── multiqc      
 │               └── etc.   
 │── sample_1    
-│       └──  etc.  
+│       └── sample_1-freebayes-germline.vcf.gz  # Germline variant calls - (freebayes)
+│       └── sample_1-vardict-germline.vcf.gz    # Germline variant calls - (vardict)
+│       └── sample_1-cnvkit.cns                 # CNA segments
+│       └── sample_1-cnvkit-call.cns            # CNA segment calls
+│       └── etc.
 └──  sample_2     
-        └──  etc. 
+        └── sample_2-freebayes-germline.vcf.gz  # Germline variant calls - (freebayes)
+        └── sample_2-vardict-germline.vcf.gz    # Germline variant calls - (vardict)
+        └── sample_2-cnvkit.cns                 # CNA segments
+        └── sample_2-cnvkit-call.cns            # CNA segment calls
+        └── etc.
 ```
 
-The final somatic VCF will be contained in the main project folder with the extension *.ensemble.vcf as well as multiQC metrics. Germline VCF and copy number variants will be contained in individuals sample folders.
+The final somatic VCF will be contained in the main project folder with the extension *-ensemble-annotated.vcf as well as multiQC metrics. Germline VCF and copy number variants will be contained in individual sample folders.
 
+Note there will be many other intermediate files and QC metrics that may or may not be useful to you.
 ```
