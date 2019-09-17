@@ -1,0 +1,55 @@
+
+details:
+- description: sample1
+  files: [/path/sample1_R1.fq.gz, /path/sample1_R2.fq.gz]
+  metadata:
+    batch: [sample1]
+    phenotype: tumor
+  analysis: variant2
+  genome_build: hg19
+  algorithm:
+    platform: illumina
+    quality_format: standard
+    trim_reads: true
+    adapters: truseq
+    aligner:  bwa
+    mark_duplicates: true
+    recalibrate: false
+    realign: false
+    coverage: /path/exome.bed
+    variant_regions: /path/exome.bed
+    svcaller: [cnvkit]
+    variantcaller: [vardict, freebayes]
+    min_allele_fraction: 0
+    ensemble:
+      numpass: 2
+- description: sample2
+  files: [/path/sample2_R1.fq.gz, /path/sample2_R2.fq.gz]
+  metadata:
+    batch: [sample2]
+    phenotype: tumor
+  analysis: variant2
+  genome_build: hg19
+  algorithm:
+    platform: illumina
+    quality_format: standard
+    trim_reads: true
+    adapters: truseq
+    aligner:  bwa
+    mark_duplicates: true
+    recalibrate: false
+    realign: false
+    coverage: /path/exome.bed
+    variant_regions: /path/exome.bed
+    svcaller: [cnvkit]
+    variantcaller: [vardict, freebayes]
+    min_allele_fraction: 0
+    ensemble:
+      numpass: 2
+resources:
+ default:
+  memory: 7G
+  cores: 7
+  jvm_opts: ["-Xms750m", "-Xmx7000m"]
+upload:
+  dir: /path/project_dir
