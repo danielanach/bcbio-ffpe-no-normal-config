@@ -1,19 +1,22 @@
-# bcbio-pre-cancer-config
+# bcbio-ffpe-no-normal-config
 
-Configuration to use [bcbio workflow](https://bcbio-nextgen.readthedocs.io/en/latest/contents/pipelines.html#cancer-variant-calling) with the intention of obtaining somatic, germline and copy number variant calling from pre-cancer FFPE samples without matched normal.
+Configuration to use [bcbio workflow](https://bcbio-nextgen.readthedocs.io/en/latest/contents/pipelines.html#cancer-variant-calling) with the intention of obtaining somatic, germline and copy number variant calling from cancer / ffpe-no-normal FFPE samples without matched normals.
 
 This configuration assumes:
 * Targeted capture library sequencing preparation (e.g. Agilent SureSelect XTHS)
 * Paired-end sequencing
-* UMIs were used and are contained in separate fastq file
+* If UMIs were used, they are contained in separate fastq file
 * Samples are 'tumor/lesion' without matched normal
 
-This workflow leverages unique molecular identifiers (UMIs) for additional error correction and PCR duplicate removal. It also uses a population database strategy for filtering of germline variants described in the [bcbio documentation](https://bcbio-nextgen.readthedocs.io/en/latest/contents/pipelines.html#cancer-variant-calling) as well as in this [benchmarking blog post](http://bcb.io/2015/03/05/cancerval/). This somatic variant prioritization approach is the biggest benefit of utilizing the bcbio cancer variant calling workflow.
+ This workflow leverages a population database strategy for filtering of germline variants described in the [bcbio documentation](https://bcbio-nextgen.readthedocs.io/en/latest/contents/pipelines.html#cancer-variant-calling) as well as in this [benchmarking blog post](http://bcb.io/2015/03/05/cancerval/). This somatic variant prioritization approach is the biggest benefit of utilizing the bcbio cancer variant calling workflow.
+
+**Note on UMIs:**
+This workflow can also use unique molecular identifiers (UMIs) for additional error correction and PCR duplicate removal. However, it is not currently recommended for somatic variant calling with this configuration since the variant callers used here are not UMI-aware and the base quality scores are altered in consensus bam. But you can use the CNV calls and the output bam file.   
 
 
 ## Configuration file
 
-The pipeline is executed using a yaml file and in this repository the example is named: `bcbio_pre-cancer.yaml`.
+The pipeline is executed using a yaml file and in this repository the example is named: `bcbio_ffpe-no-normal.yaml`.
 
 The yaml file is edited for each workflow execution to reflect necessary parameters for that analysis.
 
@@ -28,9 +31,9 @@ At the minimum you will need to edit information about your samples:
     phenotype: tumor
 ```
 
-Unless you have matched normal, then do not change the phenotype for your samples. 
+Unless you have matched normal, then do not change the phenotype for your samples.
 
-### Adjust regions for analysis 
+### Adjust regions for analysis
 
 To specify a list of targeted regions to calculate coverage in QC metrics, indicate your bed file location in this yaml parameter:
 ```
@@ -46,6 +49,31 @@ variant_regions: /path/exome.bed
 If you have issues please ensure the bed file genome version (e.g. hg19, hg38, or GRch38) is the same as the one used for read alignment, here are some [additional tips](https://bcbio-nextgen.readthedocs.io/en/latest/contents/configuration.html#input-file-preparation).
 
 If you have WGS data, you can remove these two parameters from the yaml file.
+
+### Adjust variant calling parameters
+
+Parameters for variant calling can be adjusted in the yaml configuration file.
+
+Indicate which variant callers you would like to use here:
+
+```
+variantcaller: [vardict, freebayes]
+```
+
+Indicate the number of variant callers which must call a variant in order to be reported:
+
+```
+ensemble:
+  numpass: 2
+```
+
+Low variant allelic frequency (VAF) variants are more likely to contain false variants which are artifacts of DNA damage, especially common is C>T in FFPE samples.
+
+Adjust your minimum VAF in this line of the yaml configuration file. Our common practice is to leave it at 0 for variant calling, then filter for VAF > 0.1 for downstream analysis. This enables us to better assess the levels of damage artifacts in our samples prior to removing them.
+
+```
+min_allele_fraction: 0
+```
 
 ### Adjust UMI consensus making parameters
 
@@ -90,7 +118,7 @@ A consideration for using bcbio is memory, these are some estimates for space re
 |   | total  |
 |---|---|
 | Tools  | 4 Gb  |
-| Databases  | ~200 Gb  |
+| Databases  | ~90 Gb  |
 
 
 ### Installation instructions
@@ -125,12 +153,12 @@ After bcbio installation, proper yaml file configuration, and UMI pre-processing
 The workflow can be executed using:
 
 ```
-bcbio_nextgen.py bcbio_pre-cancer.yaml -n <cores_to_use>
+bcbio_nextgen.py bcbio_ffpe-no-normal.yaml -n <cores_to_use>
 ```
 
 ## Results
 
-The final output structure will contain several folders and files. 
+The final output structure will contain several folders and files.
 
 ```
 /path/project_name      
@@ -153,7 +181,6 @@ The final output structure will contain several folders and files.
         └── etc.
 ```
 
-The final somatic VCF will be contained in the main project folder with the extension *-ensemble-annotated.vcf as well as multiQC metrics. Germline VCF and copy number variants will be contained in individual sample folders.
+The final somatic VCF will be contained in the main project folder with the extension \*-ensemble-annotated.vcf as well as multiQC metrics. Germline VCF and copy number variants will be contained in individual sample folders.
 
 Note there will be many other intermediate files and QC metrics that may or may not be useful to you.
-```
