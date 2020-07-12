@@ -8,22 +8,25 @@ details:
   analysis: variant2
   genome_build: hg19
   algorithm:
+    umi_type: fastq_name
     platform: illumina
     quality_format: standard
-    umi_type: fastq_name
     trim_reads: true
     adapters: truseq
     aligner:  bwa
     mark_duplicates: true
     recalibrate: false
     realign: false
+    tools_on: mutect2_readmodel
     coverage: /path/exome.bed
     variant_regions: /path/exome.bed
     svcaller: [cnvkit]
-    variantcaller: [vardict, freebayes]
+    variantcaller: [vardict, mutect2]
     min_allele_fraction: 0
     ensemble:
       numpass: 2
+    background:
+      variant: exome-panel-pon.vcf
 - description: sample2
   files: [/path/sample2_R1.fq.gz, /path/sample2_R2.fq.gz]
   metadata:
@@ -32,22 +35,25 @@ details:
   analysis: variant2
   genome_build: hg19
   algorithm:
+    umi_type: fastq_name
     platform: illumina
     quality_format: standard
-    umi_type: fastq_name
     trim_reads: true
     adapters: truseq
     aligner:  bwa
     mark_duplicates: true
     recalibrate: false
     realign: false
+    tools_on: mutect2_readmodel
     coverage: /path/exome.bed
     variant_regions: /path/exome.bed
     svcaller: [cnvkit]
-    variantcaller: [vardict, freebayes]
+    variantcaller: [vardict, mutect2]
     min_allele_fraction: 0
     ensemble:
       numpass: 2
+    background:
+      variant: exome-panel-pon.vcf
 resources:
  default:
   memory: 7G
