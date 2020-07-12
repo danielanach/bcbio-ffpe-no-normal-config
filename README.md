@@ -8,7 +8,12 @@ This configuration assumes:
 * If UMIs were used, they are contained in separate fastq file
 * Samples are 'tumor/lesion' without matched normal
 
- This workflow leverages a population database strategy for filtering of germline variants described in the [bcbio documentation](https://bcbio-nextgen.readthedocs.io/en/latest/contents/pipelines.html#cancer-variant-calling) as well as in this [benchmarking blog post](http://bcb.io/2015/03/05/cancerval/). This somatic variant prioritization approach is the biggest benefit of utilizing the bcbio cancer variant calling workflow.
+
+
+This workflow leverages a population database strategy for filtering of germline variants described in the [bcbio documentation](https://bcbio-nextgen.readthedocs.io/en/latest/contents/pipelines.html#cancer-variant-calling) as well as in this [benchmarking blog post](http://bcb.io/2015/03/05/cancerval/). This somatic variant prioritization approach is the biggest benefit of utilizing the bcbio cancer variant calling workflow.
+
+**Note on pool of normal:**
+The best practice for tumor-only, or paired analysis is to include a panel of normal (PON) samples that were processed in the same manner as your samples during variant calling in order to remove techinical artifacts. If this is unavailable to you, then a publicly available PON is still better than variant calling without it. We have previously used this publicly available PON and the sensitivity / precision was improved with its usage: https://console.cloud.google.com/storage/browser/details/gatk-best-practices/somatic-b37/Mutect2-exome-panel.vcf. 
 
 **Note on UMIs:**
 This workflow can also use unique molecular identifiers (UMIs) for additional error correction and PCR duplicate removal. However, it is not currently recommended for somatic variant calling with this configuration since the variant callers used here are not UMI-aware and the base quality scores are altered in consensus bam. But you can use the CNV calls and the output bam file.   
@@ -57,7 +62,7 @@ Parameters for variant calling can be adjusted in the yaml configuration file.
 Indicate which variant callers you would like to use here:
 
 ```
-variantcaller: [vardict, freebayes]
+variantcaller: [vardict, mutect2]
 ```
 
 Indicate the number of variant callers which must call a variant in order to be reported:
@@ -163,18 +168,18 @@ The final output structure will contain several folders and files.
 ```
 /path/project_name      
 │── project_name       
-│       └── sample_1-ensemble-annotated.vcf.gz   # Somatic variant calls - (intersection freebayes and vardict)
-│       └── sample_2-ensemble-annotated.vcf.gz   # Somatic variant calls - (intersection freebayes and vardict)
+│       └── sample_1-ensemble-annotated.vcf.gz   # Somatic variant calls - (intersection mutect2 and vardict)
+│       └── sample_2-ensemble-annotated.vcf.gz   # Somatic variant calls - (intersection mutect2 and vardict)
 │       └── multiqc      
 │               └── etc.   
 │── sample_1    
-│       └── sample_1-freebayes-germline.vcf.gz  # Germline variant calls - (freebayes)
+│       └── sample_1-mutect2-germline.vcf.gz  # Germline variant calls - (mutect2)
 │       └── sample_1-vardict-germline.vcf.gz    # Germline variant calls - (vardict)
 │       └── sample_1-cnvkit.cns                 # CNA segments
 │       └── sample_1-cnvkit-call.cns            # CNA segment calls
 │       └── etc.
 └──  sample_2     
-        └── sample_2-freebayes-germline.vcf.gz  # Germline variant calls - (freebayes)
+        └── sample_2-mutect2-germline.vcf.gz  # Germline variant calls - (mutect2)
         └── sample_2-vardict-germline.vcf.gz    # Germline variant calls - (vardict)
         └── sample_2-cnvkit.cns                 # CNA segments
         └── sample_2-cnvkit-call.cns            # CNA segment calls
